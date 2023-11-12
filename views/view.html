@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Files</title>
+</head>
+<body>
+  <ul id="list-files"></ul>
+  <script>
+    function Yo(){
+      let self = this
+      const ul = document.getElementById("list-files");
+
+      const renderData = function(res){
+        res.forEach(each => {
+          let li = document.createElement("li")
+          let a = document.createElement("a")
+
+          li.innerText = "download "
+          li.appendChild(a)
+          ul.appendChild(li)
+
+          a.href = "/download?path="+encodeURI(each.path);
+          a.innerText = each.filename
+          a.target = "_blank"
+        });
+      }
+
+      const getAllFiles = function(){
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET","/list-files");
+        xhr.onreadystatechange = ()=>{
+          if(xhr.readyState == 4 && xhr.status == 200){
+            let json = JSON.parse(xhr.responseText)
+            renderData(json)
+          }
+        }
+        xhr.send();
+      }
+
+      self.init = function(){
+        getAllFiles()
+      }
+    }
+
+    window.onload = function(){
+      new Yo().init();
+    }
+  </script>
+</body>
+</html>
